@@ -37,12 +37,18 @@ const (
 
 // PaLMClient represents a Vertex AI based PaLM API client.
 type PaLMClient struct {
-	client    *aiplatform.PredictionClient
-	projectID string
+	client         *aiplatform.PredictionClient
+	projectID      string
+	embeddingModel string // The embedding model to use (e.g., "textembedding-gecko")
 }
 
 // New returns a new Vertex AI based PaLM API client.
 func New(ctx context.Context, projectID, location string, opts ...option.ClientOption) (*PaLMClient, error) {
+	return NewWithEmbeddingModel(ctx, projectID, location, embeddingModelName, opts...)
+}
+
+// NewWithEmbeddingModel returns a new Vertex AI based PaLM API client with custom embedding model.
+func NewWithEmbeddingModel(ctx context.Context, projectID, location, embeddingModel string, opts ...option.ClientOption) (*PaLMClient, error) {
 	numConns := runtime.GOMAXPROCS(0)
 	if numConns > defaultMaxConns {
 		numConns = defaultMaxConns
@@ -60,8 +66,9 @@ func New(ctx context.Context, projectID, location string, opts ...option.ClientO
 		return nil, err
 	}
 	return &PaLMClient{
-		client:    client,
-		projectID: projectID,
+		client:         client,
+		projectID:      projectID,
+		embeddingModel: embeddingModel,
 	}, nil
 }
 
@@ -118,7 +125,7 @@ type EmbeddingRequest struct {
 // CreateEmbedding creates embeddings.
 func (c *PaLMClient) CreateEmbedding(ctx context.Context, r *EmbeddingRequest) ([][]float32, error) {
 	params := map[string]interface{}{}
-	responses, err := c.batchPredict(ctx, embeddingModelName, r.Input, params)
+	responses, err := c.batchPredict(ctx, c.embeddingModel, r.Input, params)
 	if err != nil {
 		return nil, err
 	}

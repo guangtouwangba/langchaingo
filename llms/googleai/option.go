@@ -30,7 +30,7 @@ func DefaultOptions() Options {
 		CloudProject:          "",
 		CloudLocation:         "",
 		DefaultModel:          "gemini-pro",
-		DefaultEmbeddingModel: "embedding-001",
+		DefaultEmbeddingModel: "textembedding-gecko",
 		DefaultCandidateCount: 1,
 		DefaultMaxTokens:      2048,
 		DefaultTemperature:    0.5,

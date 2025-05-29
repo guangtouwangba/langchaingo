@@ -42,10 +42,11 @@ func New(ctx context.Context, opts ...googleai.Option) (*Vertex, error) {
 		return nil, err
 	}
 
-	palmClient, err := palmclient.New(
+	palmClient, err := palmclient.NewWithEmbeddingModel(
 		ctx,
 		clientOptions.CloudProject,
 		clientOptions.CloudLocation,
+		clientOptions.DefaultEmbeddingModel,
 		clientOptions.ClientOptions...)
 	if err != nil {
 		return nil, err
